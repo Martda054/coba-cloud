@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#8BAE66">
+    <title>Save Real - Aplikasi Menabung Mahasiswa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="#" id="manifest-placeholder">
+    <style>
+        * {
+            font-family: 'EB Garamond', serif;
+        }
+        
+        :root {
+            --primary-color: #8BAE66;
+            --primary-dark: #6d8f4f;
+            --bg-light: #f8f9fa;
+            --text-dark: #2c3e50;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease-in;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 15px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 174, 102, 0.4);
+        }
+        
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 25px;
+            margin-bottom: 25px;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            background: white;
+        }
+        
+        .feature-card:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .feature-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+        
+        .feature-card:hover i {
+            color: white;
+            animation: pulse 0.6s ease;
+        }
+        
+        .navbar-custom {
+            background: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+        
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+        
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(139, 174, 102, 0.25);
+        }
+        
+        .transaction-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 15px;
+            background: white;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .transaction-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .income {
+            border-left: 4px solid #28a745;
+        }
+        
+        .expense {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .pin-input {
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            text-align: center;
+            margin: 0 5px;
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .challenge-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            margin: 5px;
+            animation: pulse 2s infinite;
+        }
+        
+        .stat-box {
+            padding: 20px;
+            border-radius: 15px;
+            background: white;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 24px;
+            box-shadow: 0 5px 20px rgba(139, 174, 102, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: scale(1.1);
+            background: var(--primary-dark);
+        }
+        
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeOut 0.5s ease 2s forwards;
+        }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+        
+        .splash-logo {
+            color: white;
+            text-align: center;
+            animation: pulse 1.5s ease infinite;
+        }
+        
+        .splash-logo i {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .splash-logo h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div class="splash-screen">
+        <div class="splash-logo">
+            <i class="fas fa-piggy-bank"></i>
+            <h1>Save Real</h1>
+            <p class="fs-5">Kelola Keuanganmu dengan Bijak</p>
+        </div>
+    </div>
+
+    <!-- PIN Lock Screen -->
+    <div id="pinLockPage" class="page">
+        <div class="container vh-100 d-flex align-items-center justify-content-center">
+            <div class="card p-5 text-center" style="max-width: 400px; width: 100%;">
+                <i class="fas fa-lock fa-4x text-primary mb-4"></i>
+                <h3 class="mb-4">Masukkan PIN</h3>
+                <div class="d-flex justify-content-center mb-4">
+                    <input type="password" maxlength="1" class="pin-input" id="pin1">
+                    <input type="password" maxlength="1" class="pin-input" id="pin2">
+                    <input type="password" maxlength="1" class="pin-input" id="pin3">
+                    <input type="password" maxlength="1" class="pin-input" id="pin4">
+                </div>
+                <button class="btn btn-primary w-100" onclick="verifyPIN()">
+                    <i class="fas fa-unlock me-2"></i>Buka Aplikasi
+                </button>
+                <small class="text-muted mt-3">PIN Default: 1234</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="page">
+        <nav class="navbar navbar-custom">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">
+                    <i class="fas fa-piggy-bank text-primary me-2"></i>Save Real
+                </span>
+                <button class="btn btn-outline-primary btn-sm" onclick="showPage('settingsPage')">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="container py-4">
+            <!-- Balance Card -->
+            <div class="balance-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="opacity-75">Saldo Saat Ini</small>
+                        <div class="balance-amount" id="currentBalance">Rp 0</div>
+                    </div>
+                    <i class="fas fa-wallet fa-3x opacity-50"></i>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <small class="opacity-75">Pemasukan Bulan Ini</small>
+                        <div class="fs-5 fw-bold" id="monthlyIncome">Rp 0</div>
+                    </div>
+                    <div class="col-6">
+                        <small class="opacity-75">Pengeluaran Bulan Ini</small>
+                        <div class="fs-5 fw-bold" id="monthlyExpense">Rp 0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-6 mb-3">
+                    <button class="btn btn-success w-100 py-3" onclick="showTransactionModal('income')">
+                        <i class="fas fa-plus-circle me-2"></i>Pemasukan
+                    </button>
+                </div>
+                <div class="col-6 mb-3">
+                    <button class="btn btn-danger w-100 py-3" onclick="showTransactionModal('expense')">
+                        <i class="fas fa-minus-circle me-2"></i>Pengeluaran
+                    </button>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="row g-3">
+                <div class="col-6 col-md-4">
+                    <div class="card feature-card" onclick="showPage('savingsGoalPage')">
+                        <i class="fas fa-bullseye"></i>
+                        <h6>Target Tabungan</h6>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card feature-card" onclick="showPage('dailyNotesPage')">
+                        <i class="fas fa-book"></i>
+                        <h6>Catatan Harian</h6>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card feature-card" onclick="showPage('monthlyExpensePage')">
+                        <i class="fas fa-chart-pie"></i>
+                        <h6>Pengeluaran Bulanan</h6>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card feature-card" onclick="showPage('analysisPage')">
+                        <i class="fas fa-chart-line"></i>
+                        <h6>Analisis Keuangan</h6>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card feature-card" onclick="showPage('reminderPage')">
+                        <i class="fas fa-bell"></i>
+                        <h6>Reminder</h6>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card feature-card" onclick="showPage('challengePage')">
+                        <i class="fas fa-trophy"></i>
+                        <h6>Challenge</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Savings Goal Page -->
+    <div id="savingsGoalPage" class="page">
+        <nav class="navbar navbar-custom">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">
+                    <i class="fas fa-bullseye text-primary me-2"></i>Target Tabungan
+                </span>
+            </div>
+        </nav>
+        <div class="container py-4">
+            <button class="btn btn-primary mb-3" onclick="showGoalModal()">
+                <i class="fas fa-plus me-2"></i>Buat Target Baru
+            </button>
+            <div id="goalsList"></div>
+        </div>
+        <button class="back-btn" onclick="showPage('dashboardPage')">
+            <i class="fas fa-home"></i>
+        </button>
+    </div>
+
+    <!-- Daily Notes Page -->
+    <div id="dailyNotesPage" class="page">
+        <nav class="navbar navbar-custom">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">
+                    <i class="fas fa-book text-primary me-2"></i>Catatan Harian
+                </span>
+            </div>
+        </nav>
+        <div class="container py-4">
+            <div class="mb-3">
+                <input type="date" class="form-control" id="filterDate" onchange="filterTransactions()">
+            </div>
+            <div id="transactionsList"></div>
+        </div>
+        <button class="back-btn" onclick="showPage('dashboardPage')">
+            <i class="fas fa-home"></i>
+        </button>
+    </div>
+
+    <!-- Monthly Expense Page -->
+    <div id="monthlyExpensePage" class="page">
+        <nav class="navbar navbar-custom">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">
+                    <i class="fas fa-chart-pie text-primary me-2"></i>Pengeluaran Bulanan
+                </span>
+            </div>
+        </nav>
+        <div class="container py-4">
+            <div class="card mb-4 p-4">
+                <h5>Budget Bulanan</h5>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Rp</span>
+                    <input type="number" class="form-control" id="monthlyBudget" placeholder="Masukkan budget bulanan">
+                    <button class="btn btn-primary" onclick="saveBudget()">Simpan</button>
+                </div>
+                <div class="progress" style="height: 30px;">
+                    <div class="progress-bar" id="budgetProgress" role="progressbar" style="width: 0%">0%</div>
+                </div>
+                <small class="text-muted mt-2">Terpakai: <span id="usedBudget">Rp 0</span> dari <span id="totalBudget">Rp 0</span></small>
+            </div>
+            <div class="card p-4">
+                <h5>Pengeluaran per Kategori</h5>
+                <canvas id="categoryChart" height="200"></canvas>
+            </div>
+        </div>
+        <button class="back-btn" onclick="showPage('dashboardPage')">
+            <i class="fas fa-home"></i>
+        </button>
+    </div>
+
+    <!-- Analysis Page -->
+    <div id="analysisPage" class="page">
+        <nav class="navbar navbar-custom">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">
+                    <i class="fas fa-chart-line text-primary me-2"></i>Analisis Keuangan
+                </span>
+            </div>
+        </nav>
+        <div class="container py-4">
+            <div class="stat-box">
+                <h6><i class="fas fa-calendar-week text-primary me-2"></i>Rata-rata Pengeluaran Harian</h6>
+                <h4 id="avgDaily">Rp 0</h4>
+            </div>
+            <div class="stat-box">
+                <h6><i class="fas fa-exclamation-triangle text-warning me-2"></i>Kategori Terboros</h6>
+                <h4 id="topCategory">-</h4>
+            </div>
+            <div class="stat-box">
+                <h6><i class="fas fa-lightbulb text-info me-2"></i>Insight & Saran</h6>
+                <p id="insights" class="mb-0">Belum ada data cukup untuk analisis.</p>
+            </div>
+            <div class="card p-4">
+                <h5>Tren 7 Hari Terakhir</h5>
+                <canvas id="trendChart" height="150"></canvas>
+            </div>
+        </div>
+        <button class="back-btn" onclick="showPage('dashboardPage')">
+            <i class="fas fa-home"></i>
+        </button>
+    </div>
+
+    <!-- Reminder Page -->
+    <div id="reminderPage" class="page">
+        <nav class="navbar navbar-custom">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">
+                    <i class="fas fa-bell text-primary me-2"></i>Reminder & Notifikasi
+                </span>
+            </div>
+        </nav>
+        <div class="container py-4">
+            <button class="btn btn-primary mb-3" onclick="showReminderModal()">
+                <i class="fas fa-plus me-2"></i>Tambah Reminder
+            </button>
+            <div id="remindersList"></div>
+        </div>
+        <button class="back-btn" onclick="showPage('dashboardPage')">
+            <i class="fas fa-home"></i>
+        </button>
+    </div>
+
+    <!-- Challenge Page -->
+    <div id="challengePage" class="page">
+        <nav class="navbar navbar-custom">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">
+                    <i class="fas fa-trophy text-primary me-2"></i>Challenge Menabung
+                </span>
+            </div>
+        </nav>
+        <div class="container py-4">
+            <div class="card p-4 mb-3">
+                <h5><i class="fas fa-fire text-danger me-2"></i>Challenge 30 Hari</h5>
+                <p>Nabung minimal Rp 10.000 setiap hari selama 30 hari!</p>
+                <div class="progress mb-2" style="height: 25px;">
+                    <div class="progress-bar bg-success" id="challengeProgress" style="width: 0%">0/30 Hari</div>
+                </div>
+                <button class="btn btn-success" onclick="updateChallenge()">
+                    <i class="fas fa-check me-2"></i>Tandai Hari Ini Selesai
+                </button>
+            </div>
+            <div class="card p-4">
+                <h5><i class="fas fa-medal text-warning me-2"></i>Badge yang Diraih</h5>
+                <div id="badgesList">
+                    <p class="text-muted">Selesaikan challenge untuk mendapatkan badge!</p>
+                </div>
+            </div>
+        </div>
+        <button class="back-btn" onclick="showPage('dashboardPage')">
+            <i class="fas fa-home"></i>
+        </button>
+    </div>
+
+    <!-- Settings Page -->
+    <div id="settingsPage" class="page">
+        <nav class="navbar navbar-custom">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">
+                    <i class="fas fa-cog text-primary me-2"></i>Pengaturan
+                </span>
+            </div>
+        </nav>
+        <div class="container py-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5><i class="fas fa-user text-primary me-2"></i>Profil Pengguna</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Nama</label>
+                        <input type="text" class="form-control" id="userName" placeholder="Nama Anda">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="userEmail" placeholder="email@example.com">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveProfile()">
+                        <i class="fas fa-save me-2"></i>Simpan Profil
+                    </button>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5><i class="fas fa-lock text-primary me-2"></i>Keamanan</h5>
+                    <button class="btn btn-warning w-100 mb-2" onclick="changePIN()">
+                        <i class="fas fa-key me-2"></i>Ubah PIN
+                    </button>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5><i class="fas fa-database text-primary me-2"></i>Data</h5>
+                    <button class="btn btn-info w-100 mb-2" onclick="backupData()">
+                        <i class="fas fa-download me-2"></i>Backup Data
+                    </button>
+                    <button class="btn btn-secondary w-100 mb-2" onclick="restoreData()">
+                        <i class="fas fa-upload me-2"></i>Restore Data
+                    </button>
+                    <button class="btn btn-danger w-100" onclick="clearAllData()">
+                        <i class="fas fa-trash me-2"></i>Hapus Semua Data
+                    </button>
+                </div>
+            </div>
+        </div>
+        <button class="back-btn" onclick="showPage('dashboardPage')">
+            <i class="fas fa-home"></i>
+        </button>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div class="modal fade" id="transactionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="transactionModalTitle">Tambah Transaksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="transactionType">
+                    <div class="mb-3">
+                        <label class="form-label">Jumlah (Rp)</label>
+                        <input type="number" class="form-control" id="transactionAmount" placeholder="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Kategori</label>
+                        <select class="form-select" id="transactionCategory">
+                            <option value="Makanan">Makanan</option>
+                            <option value="Transportasi">Transportasi</option>
+                            <option value="Belanja">Belanja</option>
+                            <option value="Hiburan">Hiburan</option>
+                            <option value="Pendidikan">Pendidikan</option>
+                            <option value="Kesehatan">Kesehatan</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Catatan</label>
+                        <textarea class="form-control" id="transactionNote" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" class="form-control" id="transactionDate">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTransaction()">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goal Modal -->
+    <div class="modal fade" id="goalModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Buat Target Tabungan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Target</label>
+                        <input type="text" class="form-control" id="goalName" placeholder="Misal: Beli Laptop">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Target Jumlah (Rp)</label>
+                        <input type="number" class="form-control" id="goalAmount" placeholder="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tenggat Waktu</label>
+                        <input type="date" class="form-control" id="goalDeadline">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="saveGoal()">Buat Target</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminder Modal -->
+    <div class="modal fade" id="reminderModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Reminder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Judul Reminder</label>
+                        <input type="text" class="form-control" id="reminderTitle" placeholder="Misal: Bayar Kost">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" class="form-control" id="reminderDate">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Catatan</label>
+                        <textarea class="form-control" id="reminderNote" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="saveReminder()">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Initialize app
+        let currentPage = 'pinLockPage';
+        let appData = {
+            pin: '1234',
+            balance: 0,
+            transactions: [],
+            goals: [],
+            reminders: [],
+            budget: 0,
+            profile: { name: '', email: '' },
+            challenge: { days: 0, completed: false }
+        };
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('saveRealData');
+            if (saved) {
+                appData = JSON.parse(saved);
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('saveRealData', JSON.stringify(appData));
+        }
+
+        // Show page
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            currentPage = pageId;
+            
+            if (pageId === 'dashboardPage') updateDashboard();
+            if (pageId === 'savingsGoalPage') displayGoals();
+            if (pageId === 'dailyNotesPage') displayTransactions();
+            if (pageId === 'monthlyExpensePage') updateMonthlyExpense();
+            if (pageId === 'analysisPage') updateAnalysis();
+            if (pageId === 'reminderPage') displayReminders();
+            if (pageId === 'challengePage') updateChallengeDisplay();
+            if (pageId === 'settingsPage') loadProfile();
+        }
+
+        // PIN Functions
+        function verifyPIN() {
+            const pin = document.getElementById('pin1').value + 
+                       document.getElementById('pin2').value + 
+                       document.getElementById('pin3').value + 
+                       document.getElementById('pin4').value;
+            
+            if (pin === appData.pin) {
+                showPage('dashboardPage');
+            } else {
+                alert('PIN salah!');
+                document.querySelectorAll('.pin-input').forEach(input => input.value = '');
+                document.getElementById('pin1').focus();
+            }
+        }
+
+        // Auto move to next PIN input
+        document.querySelectorAll('.pin-input').forEach((input, index, inputs) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Format currency
+        function formatCurrency(amount) {
+            return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            let monthlyIncome = 0;
+            let monthlyExpense = 0;
+            
+            appData.transactions.forEach(t => {
+                const tDate = new Date(t.date);
+                if (tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear) {
+                    if (t.type === 'income') {
+                        monthlyIncome += t.amount;
+                    } else {
+                        monthlyExpense += t.amount;
+                    }
+                }
+            });
+            
+            appData.balance = monthlyIncome - monthlyExpense;
+            
+            document.getElementById('currentBalance').textContent = formatCurrency(appData.balance);
+            document.getElementById('monthlyIncome').textContent = formatCurrency(monthlyIncome);
+            document.getElementById('monthlyExpense').textContent = formatCurrency(monthlyExpense);
+        }
+
+        // Transaction Modal
+        function showTransactionModal(type) {
+            document.getElementById('transactionType').value = type;
+            document.getElementById('transactionModalTitle').textContent = 
+                type === 'income' ? 'Tambah Pemasukan' : 'Tambah Pengeluaran';
+            document.getElementById('transactionAmount').value = '';
+            document.getElementById('transactionNote').value = '';
+            document.getElementById('transactionDate').value = new Date().toISOString().split('T')[0];
+            new bootstrap.Modal(document.getElementById('transactionModal')).show();
+        }
+
+        // Save Transaction
+        function saveTransaction() {
+            const type = document.getElementById('transactionType').value;
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const category = document.getElementById('transactionCategory').value;
+            const note = document.getElementById('transactionNote').value;
+            const date = document.getElementById('transactionDate').value;
+            
+            if (!amount || amount <= 0) {
+                alert('Masukkan jumlah yang valid!');
+                return;
+            }
+            
+            appData.transactions.push({
+                id: Date.now(),
+                type: type,
+                amount: amount,
+                category: category,
+                note: note,
+                date: date
+            });
+            
+            saveData();
+            bootstrap.Modal.getInstance(document.getElementById('transactionModal')).hide();
+            updateDashboard();
+            
+            // Show success animation
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 start-50 translate-middle-x mt-3 alert alert-success';
+            toast.innerHTML = '<i class="fas fa-check-circle me-2"></i>Transaksi berhasil disimpan!';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        // Display Transactions
+        function displayTransactions() {
+            const filterDate = document.getElementById('filterDate').value;
+            let filtered = appData.transactions;
+            
+            if (filterDate) {
+                filtered = appData.transactions.filter(t => t.date === filterDate);
+            }
+            
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            const html = filtered.map(t => `
+                <div class="transaction-item ${t.type === 'income' ? 'income' : 'expense'}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">${t.category}</h6>
+                            <small class="text-muted">${t.note || '-'}</small>
+                            <br><small class="text-muted">${new Date(t.date).toLocaleDateString('id-ID')}</small>
+                        </div>
+                        <div class="text-end">
+                            <h5 class="mb-0 ${t.type === 'income' ? 'text-success' : 'text-danger'}">
+                                ${t.type === 'income' ? '+' : '-'} ${formatCurrency(t.amount)}
+                            </h5>
+                            <button class="btn btn-sm btn-outline-danger mt-1" onclick="deleteTransaction(${t.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('transactionsList').innerHTML = html || '<p class="text-center text-muted">Belum ada transaksi</p>';
+        }
+
+        // Filter Transactions
+        function filterTransactions() {
+            displayTransactions();
+        }
+
+        // Delete Transaction
+        function deleteTransaction(id) {
+            if (confirm('Hapus transaksi ini?')) {
+                appData.transactions = appData.transactions.filter(t => t.id !== id);
+                saveData();
+                displayTransactions();
+                updateDashboard();
+            }
+        }
+
+        // Goal Modal
+        function showGoalModal() {
+            document.getElementById('goalName').value = '';
+            document.getElementById('goalAmount').value = '';
+            document.getElementById('goalDeadline').value = '';
+            new bootstrap.Modal(document.getElementById('goalModal')).show();
+        }
+
+        // Save Goal
+        function saveGoal() {
+            const name = document.getElementById('goalName').value;
+            const amount = parseFloat(document.getElementById('goalAmount').value);
+            const deadline = document.getElementById('goalDeadline').value;
+            
+            if (!name || !amount || !deadline) {
+                alert('Lengkapi semua field!');
+                return;
+            }
+            
+            appData.goals.push({
+                id: Date.now(),
+                name: name,
+                targetAmount: amount,
+                currentAmount: 0,
+                deadline: deadline
+            });
+            
+            saveData();
+            bootstrap.Modal.getInstance(document.getElementById('goalModal')).hide();
+            displayGoals();
+        }
+
+        // Display Goals
+        function displayGoals() {
+            const html = appData.goals.map(g => {
+                const progress = (g.currentAmount / g.targetAmount * 100).toFixed(1);
+                const daysLeft = Math.ceil((new Date(g.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+                
+                return `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5>${g.name}</h5>
+                            <p class="mb-2">Target: ${formatCurrency(g.targetAmount)}</p>
+                            <p class="mb-2">Terkumpul: ${formatCurrency(g.currentAmount)}</p>
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div class="progress-bar bg-success" style="width: ${progress}%">${progress}%</div>
+                            </div>
+                            <small class="text-muted"><i class="fas fa-calendar me-1"></i>${daysLeft} hari lagi</small>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-success me-2" onclick="depositGoal(${g.id})">
+                                    <i class="fas fa-plus me-1"></i>Setor
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteGoal(${g.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('goalsList').innerHTML = html || '<p class="text-center text-muted">Belum ada target tabungan</p>';
+        }
+
+        // Deposit to Goal
+        function depositGoal(id) {
+            const amount = prompt('Masukkan jumlah setoran:');
+            if (amount && parseFloat(amount) > 0) {
+                const goal = appData.goals.find(g => g.id === id);
+                if (goal) {
+                    goal.currentAmount += parseFloat(amount);
+                    saveData();
+                    displayGoals();
+                    
+                    if (goal.currentAmount >= goal.targetAmount) {
+                        alert('🎉 Selamat! Target tabungan tercapai!');
+                    }
+                }
+            }
+        }
+
+        // Delete Goal
+        function deleteGoal(id) {
+            if (confirm('Hapus target tabungan ini?')) {
+                appData.goals = appData.goals.filter(g => g.id !== id);
+                saveData();
+                displayGoals();
+            }
+        }
+
+        // Save Budget
+        function saveBudget() {
+            const budget = parseFloat(document.getElementById('monthlyBudget').value);
+            if (budget > 0) {
+                appData.budget = budget;
+                saveData();
+                updateMonthlyExpense();
+            }
+        }
+
+        // Update Monthly Expense
+        function updateMonthlyExpense() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            let expenses = appData.transactions.filter(t => {
+                const tDate = new Date(t.date);
+                return t.type === 'expense' && 
+                       tDate.getMonth() === currentMonth && 
+                       tDate.getFullYear() === currentYear;
+            });
+            
+            let totalExpense = expenses.reduce((sum, t) => sum + t.amount, 0);
+            
+            // Update budget progress
+            if (appData.budget > 0) {
+                const percentage = (totalExpense / appData.budget * 100).toFixed(1);
+                document.getElementById('budgetProgress').style.width = Math.min(percentage, 100) + '%';
+                document.getElementById('budgetProgress').textContent = percentage + '%';
+                document.getElementById('usedBudget').textContent = formatCurrency(totalExpense);
+                document.getElementById('totalBudget').textContent = formatCurrency(appData.budget);
+                document.getElementById('monthlyBudget').value = appData.budget;
+                
+                if (percentage > 100) {
+                    document.getElementById('budgetProgress').classList.add('bg-danger');
+                } else if (percentage > 80) {
+                    document.getElementById('budgetProgress').classList.add('bg-warning');
+                }
+            }
+            
+            // Category breakdown
+            const categoryData = {};
+            expenses.forEach(t => {
+                categoryData[t.category] = (categoryData[t.category] || 0) + t.amount;
+            });
+            
+            // Create chart
+            const ctx = document.getElementById('categoryChart');
+            if (ctx) {
+                const existingChart = Chart.getChart(ctx);
+                if (existingChart) existingChart.destroy();
+                
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(categoryData),
+                        datasets: [{
+                            data: Object.values(categoryData),
+                            backgroundColor: [
+                                '#8BAE66', '#FF6384', '#36A2EB', '#FFCE56', 
+                                '#4BC0C0', '#9966FF', '#FF9F40'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Update Analysis
+        function updateAnalysis() {
+            const last7Days = appData.transactions.filter(t => {
+                const tDate = new Date(t.date);
+                const daysDiff = (new Date() - tDate) / (1000 * 60 * 60 * 24);
+                return daysDiff <= 7 && t.type === 'expense';
+            });
+            
+            const avgDaily = last7Days.reduce((sum, t) => sum + t.amount, 0) / 7;
+            document.getElementById('avgDaily').textContent = formatCurrency(avgDaily);
+            
+            // Top category
+            const categoryTotals = {};
+            last7Days.forEach(t => {
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
+            });
+            
+            const topCat = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0];
+            document.getElementById('topCategory').textContent = topCat ? 
+                `${topCat[0]} (${formatCurrency(topCat[1])})` : '-';
+            
+            // Insights
+            let insights = '';
+            if (avgDaily > 50000) {
+                insights = '⚠️ Pengeluaran harian Anda cukup tinggi. Coba kurangi pengeluaran yang tidak perlu.';
+            } else if (avgDaily > 30000) {
+                insights = '✅ Pengeluaran harian Anda cukup wajar. Pertahankan pola ini!';
+            } else {
+                insights = '🎉 Hebat! Anda berhasil mengontrol pengeluaran dengan baik!';
+            }
+            document.getElementById('insights').textContent = insights;
+            
+            // Trend chart
+            const trendData = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dayExpense = last7Days
+                    .filter(t => new Date(t.date).toDateString() === date.toDateString())
+                    .reduce((sum, t) => sum + t.amount, 0);
+                trendData.push(dayExpense);
+            }
+            
+            const ctx = document.getElementById('trendChart');
+            if (ctx) {
+                const existingChart = Chart.getChart(ctx);
+                if (existingChart) existingChart.destroy();
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['6 hari lalu', '5', '4', '3', '2', 'Kemarin', 'Hari ini'],
+                        datasets: [{
+                            label: 'Pengeluaran (Rp)',
+                            data: trendData,
+                            borderColor: '#8BAE66',
+                            backgroundColor: 'rgba(139, 174, 102, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Reminder Modal
+        function showReminderModal() {
+            document.getElementById('reminderTitle').value = '';
+            document.getElementById('reminderDate').value = '';
+            document.getElementById('reminderNote').value = '';
+            new bootstrap.Modal(document.getElementById('reminderModal')).show();
+        }
+
+        // Save Reminder
+        function saveReminder() {
+            const title = document.getElementById('reminderTitle').value;
+            const date = document.getElementById('reminderDate').value;
+            const note = document.getElementById('reminderNote').value;
+            
+            if (!title || !date) {
+                alert('Lengkapi title dan tanggal!');
+                return;
+            }
+            
+            appData.reminders.push({
+                id: Date.now(),
+                title: title,
+                date: date,
+                note: note,
+                completed: false
+            });
+            
+            saveData();
+            bootstrap.Modal.getInstance(document.getElementById('reminderModal')).hide();
+            displayReminders();
+        }
+
+        // Display Reminders
+        function displayReminders() {
+            const html = appData.reminders.map(r => `
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="${r.completed ? 'text-decoration-line-through text-muted' : ''}">
+                                <h6>${r.title}</h6>
+                                <small><i class="fas fa-calendar me-1"></i>${new Date(r.date).toLocaleDateString('id-ID')}</small>
+                                <p class="mb-0 mt-1">${r.note || ''}</p>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm ${r.completed ? 'btn-secondary' : 'btn-success'}" 
+                                        onclick="toggleReminder(${r.id})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteReminder(${r.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('remindersList').innerHTML = html || '<p class="text-center text-muted">Belum ada reminder</p>';
+        }
+
+        // Toggle Reminder
+        function toggleReminder(id) {
+            const reminder = appData.reminders.find(r => r.id === id);
+            if (reminder) {
+                reminder.completed = !reminder.completed;
+                saveData();
+                displayReminders();
+            }
+        }
+
+        // Delete Reminder
+        function deleteReminder(id) {
+            if (confirm('Hapus reminder ini?')) {
+                appData.reminders = appData.reminders.filter(r => r.id !== id);
+                saveData();
+                displayReminders();
+            }
+        }
+
+        // Update Challenge
+        function updateChallenge() {
+            if (appData.challenge.days < 30) {
+                appData.challenge.days++;
+                saveData();
+                updateChallengeDisplay();
+                
+                if (appData.challenge.days === 30) {
+                    appData.challenge.completed = true;
+                    alert('🏆 Selamat! Anda telah menyelesaikan Challenge 30 Hari!');
+                }
+            }
+        }
+
+        // Update Challenge Display
+        function updateChallengeDisplay() {
+            const progress = (appData.challenge.days / 30 * 100).toFixed(1);
+            const progressBar = document.getElementById('challengeProgress');
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = `${appData.challenge.days}/30 Hari`;
+            }
+            
+            // Display badges
+            const badges = [];
+            if (appData.challenge.days >= 7) badges.push('🥉 7 Hari Berturut-turut');
+            if (appData.challenge.days >= 14) badges.push('🥈 14 Hari Berturut-turut');
+            if (appData.challenge.days >= 21) badges.push('🥇 21 Hari Berturut-turut');
+            if (appData.challenge.days >= 30) badges.push('🏆 Master Saver - 30 Hari!');
+            
+            const badgesList = document.getElementById('badgesList');
+            if (badgesList) {
+                badgesList.innerHTML = badges.length > 0 ? 
+                    badges.map(b => `<span class="challenge-badge">${b}</span>`).join('') :
+                    '<p class="text-muted">Selesaikan challenge untuk mendapatkan badge!</p>';
+            }
+        }
+
+        // Load Profile
+        function loadProfile() {
+            document.getElementById('userName').value = appData.profile.name || '';
+            document.getElementById('userEmail').value = appData.profile.email || '';
+        }
+
+        // Save Profile
+        function saveProfile() {
+            appData.profile.name = document.getElementById('userName').value;
+            appData.profile.email = document.getElementById('userEmail').value;
+            saveData();
+            alert('✅ Profil berhasil disimpan!');
+        }
+
+        // Change PIN
+        function changePIN() {
+            const oldPin = prompt('Masukkan PIN lama:');
+            if (oldPin === appData.pin) {
+                const newPin = prompt('Masukkan PIN baru (4 digit):');
+                if (newPin && newPin.length === 4 && /^\d+$/.test(newPin)) {
+                    appData.pin = newPin;
+                    saveData();
+                    alert('✅ PIN berhasil diubah!');
+                } else {
+                    alert('❌ PIN harus 4 digit angka!');
+                }
+            } else {
+                alert('❌ PIN lama salah!');
+            }
+        }
+
+        // Backup Data
+        function backupData() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `savereal-backup-${Date.now()}.json`;
+            link.click();
+            alert('✅ Backup berhasil diunduh!');
+        }
+
+        // Restore Data
+        function restoreData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const restored = JSON.parse(event.target.result);
+                        appData = restored;
+                        saveData();
+                        alert('✅ Data berhasil dipulihkan!');
+                        showPage('dashboardPage');
+                    } catch (error) {
+                        alert('❌ File backup tidak valid!');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        // Clear All Data
+        function clearAllData() {
+            if (confirm('⚠️ Hapus semua data? Tindakan ini tidak dapat dibatalkan!')) {
+                if (confirm('Yakin ingin menghapus SEMUA data?')) {
+                    localStorage.removeItem('saveRealData');
+                    location.reload();
+                }
+            }
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadData();
+            setTimeout(() => {
+                showPage('pinLockPage');
+                document.getElementById('pin1').focus();
+            }, 2500);
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;base64,' + btoa(`
+                self.addEventListener('install', (event) => {
+                    event.waitUntil(
+                        caches.open('savereal-v1').then((cache) => {
+                            return cache.addAll(['/']);
+                        })
+                    );
+                });
+                
+                self.addEventListener('fetch', (event) => {
+                    event.respondWith(
+                        caches.match(event.request).then((response) => {
+                            return response || fetch(event.request);
+                        })
+                    );
+                });
+            `));
+        }
+    </script>
+</body>
+</html>
